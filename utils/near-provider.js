@@ -13,7 +13,10 @@ const {
     Account,
     KeyPair,
     keyStores,
-    utils: { PublicKey },
+    utils: {
+        PublicKey,
+        format: { parseNearAmount },
+    },
 } = nearAPI;
 
 // from .env
@@ -87,6 +90,13 @@ export const getBalance = async (accountId) => {
         }
     }
     return balance;
+};
+
+// account
+
+export const sendNear = (who, amount) => {
+    const account = getAccount();
+    return account.sendMoney(who, parseNearAmount(amount));
 };
 
 // contract interactions
