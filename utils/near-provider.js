@@ -21,13 +21,12 @@ const {
 
 // from .env
 let _contractId = process.env.NEXT_PUBLIC_contractId;
+export const contractId = _contractId;
+const networkId = /testnet/gi.test(contractId) ? 'testnet' : 'mainnet';
 // from .env.development.local
 let secretKey = process.env.NEXT_PUBLIC_secretKey;
 let _accountId = process.env.NEXT_PUBLIC_accountId;
 
-export const contractId = _contractId;
-
-const networkId = /testnet/gi.test(contractId) ? 'testnet' : 'mainnet';
 const keyStore = new keyStores.InMemoryKeyStore();
 const config =
     networkId === 'testnet'

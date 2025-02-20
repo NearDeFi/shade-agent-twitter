@@ -1,6 +1,8 @@
 {
+    "type": "module",
     "private": true,
     "scripts": {
+        "deploy:contract": "cd contract && cargo near build --no-docker && cd .. && node ./utils/deploy.js",
         "test:contract": "cd contract && cargo near build --no-docker && cd .. && ava ./tests/test.js --serial --timeout 30s",
         "dev": "next dev",
         "build": "next build",
