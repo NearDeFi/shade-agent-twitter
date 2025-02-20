@@ -3,12 +3,15 @@ use near_sdk::{
     env::{self, block_timestamp},
     log, near, require,
     store::{IterableMap, IterableSet},
-    AccountId, PanicOnDefault,
+    AccountId, Gas, NearToken, PanicOnDefault, Promise,
 };
 
 use dcap_qvl::verify;
 
 mod collateral;
+mod ecdsa;
+mod external;
+mod utils;
 
 #[near(serializers = [json, borsh])]
 #[derive(Clone)]
@@ -105,6 +108,12 @@ impl Contract {
             return true;
         }
         false
+    }
+
+    // !!! WARN REQUIRE REGISTERED WORKER AGENT
+
+    pub fn get_signature(&self, payload: Vec<u8>, path: String) -> Promise {
+        ecdsa::get_sig(payload, path, 0)
     }
 
     // views

@@ -60,7 +60,7 @@ export default async function search(req, res) {
         tweets.push(tweet);
     }
 
-    processTweets();
+    // processTweets();
 
     res.status(200).json({
         tweets: tweets,
