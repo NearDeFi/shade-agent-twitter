@@ -8,17 +8,17 @@ const bakeCookies = async () => {
     const cookieStrings = [
         {
             key: 'auth_token',
-            value: '574b94bd76502951bb0e7095cb9806584cc71830',
+            value: process.env.TWITTER_AUTH_TOKEN,
             domain: '.twitter.com',
         },
         {
             key: 'ct0',
-            value: 'b4733cf7bd342566a47574f9650be130e36df6613cb5d384bf663fa11b47cb6ae2051ab6fdf02bdbaf170b87dc07ed9561ff68a2e41d061c7fbcf5f1410f942832f88e10d73c239cf5c2d61e203a5658',
+            value: process.env.TWITTER_CT0,
             domain: '.twitter.com',
         },
         {
             key: 'guest_id',
-            value: 'v1%3A173999405056446121',
+            value: process.env.TWITTER_GUEST_ID,
             domain: '.twitter.com',
         },
     ].map(
