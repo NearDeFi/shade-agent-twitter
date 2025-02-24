@@ -1,12 +1,8 @@
 version: '4.0'
 services:
     web:
-        build:
-            context: .
-            dockerfile: Dockerfile
-            target: prod
         platform: linux/amd64 # Explicitly set for TDX
-        image: mattdlockyer/based-agent-test:latest@sha256:67b7d2074ac0b6621035b9938f896ed2367707d8384e1e3baa4c0c4c39d05da7
+        image: mattdlockyer/shade-agent-twitter:latest@sha256:ae42a3a274e7ce02c0737b5a214f96354f0984a77fb446d8ca85eb084a4c93eb
         container_name: web
         ports:
             - '3000:3000'

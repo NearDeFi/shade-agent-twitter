@@ -8,6 +8,8 @@ const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn');
 let lastTimestamp = 0; //1740006269;
 let tweets = [];
 
+console.log(process.env.TWITTER_USERNAME);
+
 const processTweets = async () => {
     const tweet = tweets.shift();
     if (!tweet) return;
@@ -37,7 +39,8 @@ export default async function search(req, res) {
     // Search for recent tweets
     const results = await twitter(
         'searchTweets',
-        '"Shade Agents" ".testnet"',
+        process.env.TWITTER_SEARCH_TERM || 'blah',
+        // '"Shade Agents" ".testnet"',
         20,
         SearchMode.Latest,
     );
@@ -49,13 +52,12 @@ export default async function search(req, res) {
     tweets.length = 0;
     for (const tweet of temp) {
         if (tweet.timestamp <= lastTimestamp) continue;
-        lastTimestamp = tweet.timestamp;
+
+        // lastTimestamp = tweet.timestamp;
         // get sentiment of text
         tweet.sentiment = analyzer.getSentiment(tweet.text.split(' '));
-
-        // testing with NEAR account
-        const [nearAccount] = tweet.text.match(/([a-zA-Z0-9]*).testnet/gim);
-        tweet.nearAccount = nearAccount;
+        // if it has a NEAR account
+        tweet.nearAccount = tweet.text.match(/([a-zA-Z0-9]*).testnet/gim)?.[0];
 
         tweets.push(tweet);
     }
