@@ -140,7 +140,14 @@ export default function Home() {
                                 href="#"
                                 className={styles.card}
                                 onClick={async () => {
-                                    setMessage('Calling get_worker');
+                                    if (!accountId) {
+                                        accountId = window.prompt(
+                                            'Account ID of Worker?',
+                                        );
+                                    }
+                                    setMessage(
+                                        'Calling get_worker ' + accountId,
+                                    );
 
                                     let res;
                                     try {
@@ -175,40 +182,6 @@ export default function Home() {
                                 }}
                             >
                                 <h3>Get Worker Info</h3>
-                                <p>(registered only)</p>
-                            </a>
-
-                            <a
-                                href="#"
-                                className={styles.card}
-                                onClick={async () => {
-                                    setMessage(
-                                        'Calling is_verified_by_codehash',
-                                    );
-
-                                    // we need to call the contract from the TEE through the backend API
-                                    // the TEE keyPair is never exposed to the browser
-                                    // this method will not throw
-                                    // returns { verified: true|false }
-                                    const res = await fetch(
-                                        '/api/isVerified',
-                                    ).then((r) => r.json());
-
-                                    setMessageHide(
-                                        <>
-                                            <p>
-                                                is_verified_by_codehash
-                                                response:
-                                            </p>
-                                            <p className={styles.code}>
-                                                verified:{' '}
-                                                {JSON.stringify(res.verified)}
-                                            </p>
-                                        </>,
-                                    );
-                                }}
-                            >
-                                <h3>Call Protected Method</h3>
                                 <p>(registered only)</p>
                             </a>
                         </>
