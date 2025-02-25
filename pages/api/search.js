@@ -11,11 +11,13 @@ let lastTimestampBased = 0;
 let lastTimestampShade = 0;
 let tweets = [];
 let isShade = false;
+let processing = false;
 
 const processTweets = async () => {
     // pull first tweet
     const tweet = tweets.shift();
     if (!tweet) {
+        processing = false;
         console.log('processTweets: NO MORE TWEETS');
         return;
     }
@@ -57,7 +59,9 @@ const processTweets = async () => {
             `😎 thanks @${tweet.username} I just sent you ${uint256.substring(
                 0,
                 4,
-            )} ${isShade ? 'SHADE' : 'BASED'} tokens on HyperLiquid. 😎`,
+            )} ${
+                tweet.sentiment > 0 ? 'BASED' : 'SHADE'
+            } tokens on HyperLiquid. 😎`,
             tweet.id,
         );
     } catch (e) {
@@ -113,7 +117,10 @@ export default async function search(req, res) {
 
     console.log('SEARCH matching criteria', tweets.length);
 
-    processTweets();
+    if (!processing) {
+        processing = true;
+        processTweets();
+    }
 
     res.status(200).json({
         finished: true,

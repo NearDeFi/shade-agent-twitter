@@ -76,7 +76,7 @@ const deploy = async () => {
 
     // owner
     const codehash =
-        'sha256:54b221a65187d7f011dbe282111685a91bbcbb9246575058066864432e96b3ce';
+        'sha256:051a3309c2d19bba74fe856e7305137a5a65455287a30cfc4e05557de8fa5005';
     account = getAccount(accountId);
     const approveRes = await account.functionCall({
         contractId,
