@@ -7,7 +7,8 @@ import { networkId } from '../../utils/near-provider';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn');
-let lastTimestamp = 0; //1740006269;
+let lastTimestampBased = 0;
+let lastTimestampShade = 0;
 let tweets = [];
 let isShade = false;
 
@@ -81,8 +82,6 @@ export default async function search(req, res) {
         20,
         SearchMode.Latest,
     );
-    // switch from based to shade search terms
-    isShade = !isShade;
 
     // dump the generator to array and reverse results (oldest tweet first)
     const temp = await Array.fromAsync(results);
@@ -93,7 +92,11 @@ export default async function search(req, res) {
     // push new tweets
     for (const tweet of temp) {
         if (tweet.timestamp <= lastTimestamp) continue;
-        lastTimestamp = tweet.timestamp;
+        if (isShade) {
+            lastTimestampShade = tweet.timestamp;
+        } else {
+            lastTimestampBased = tweet.timestamp;
+        }
 
         // get sentiment of text
         tweet.sentiment = analyzer.getSentiment(tweet.text.split(' '));
@@ -111,12 +114,14 @@ export default async function search(req, res) {
 
         tweets.push(tweet);
     }
+    // switch from based to shade search terms
+    isShade = !isShade;
 
     console.log('tweets matching criteria.length', tweets.length);
 
     processTweets();
 
     res.status(200).json({
-        tweets: tweets,
+        finished: true,
     });
 }
