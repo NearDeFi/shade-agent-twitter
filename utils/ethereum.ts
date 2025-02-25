@@ -1,13 +1,13 @@
 import { ethers } from 'ethers';
 import BN from 'bn.js';
 import { fetchJson } from './utils';
-import { contractCall } from './near-provider';
+import { networkId, contractCall } from './near-provider';
 
 // !!! Warning only the contract call method "call" is tested
 
 export const ethereum = {
     name: 'Hyper Liquid ',
-    chainId: 998,
+    chainId: networkId === 'testnet' ? 998 : 999,
     currency: 'ETH',
     explorer: 'https://sepolia.etherscan.io',
     gasLimit: 21000,
@@ -157,7 +157,7 @@ export const ethereum = {
         method = 'mint',
         args = {
             address: '0xFa3D3ffd922ac4b520B7E3354F51Af37728A2fE3',
-            uint256: '1000000000000000',
+            uint256: '1000000000000000000',
         },
         ret = [],
     }) => {
@@ -227,12 +227,6 @@ export const ethereum = {
                 [serializedTx],
             );
             console.log('tx hash', hash);
-            console.log('explorer link', `${explorer}/tx/${hash}`);
-            console.log('fetching updated balance in 60s...');
-            setTimeout(async () => {
-                const balance = await getBalance({ address });
-                console.log('balance', ethers.formatUnits(balance), currency);
-            }, 60000);
         } catch (e) {
             if (/nonce too low/gi.test(JSON.stringify(e))) {
                 return console.log('tx has been tried');

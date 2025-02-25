@@ -46,40 +46,15 @@ impl Contract {
         require!(env::predecessor_account_id() == self.owner_id);
     }
 
-    pub fn require_worker(&self, codehash: String) {
-        let worker = self
-            .worker_by_account_id
-            .get(&env::predecessor_account_id())
-            .unwrap()
-            .to_owned();
-
-        require!(worker.codehash == codehash);
-    }
-
-    // examples for method access control
-
-    /// will throw on client if caller is not verified for the provided codehash
-    pub fn is_verified_by_codehash(&mut self, codehash: String) {
-        self.require_worker(codehash);
-
-        // worker agent does something amazing here
-        log!("The agent abides.")
-    }
-
     pub fn approve_codehash(&mut self, codehash: String) {
         // !!! UPGRADE TO YOUR METHOD OF MANAGING APPROVED WORKER AGENT CODEHASHES !!!
         self.require_owner();
         self.approved_codehashes.insert(codehash);
     }
 
-    /// will throw on client if worker agent is not registered with a codehash in self.approved_codehashes
-    pub fn is_verified_by_approved_codehash(&mut self) {
+    pub fn require_approved_codehash(&mut self) {
         let worker = self.get_worker(env::predecessor_account_id());
-
         require!(self.approved_codehashes.contains(&worker.codehash));
-
-        // worker agent does something amazing here
-        log!("The agent abides.")
     }
 
     // register args see: https://github.com/mattlockyer/based-agent-template/blob/main/pages/api/register.js
@@ -110,9 +85,9 @@ impl Contract {
         false
     }
 
-    // !!! WARN REQUIRE REGISTERED WORKER AGENT
+    pub fn get_signature(&mut self, payload: Vec<u8>, path: String) -> Promise {
+        self.require_approved_codehash();
 
-    pub fn get_signature(&self, payload: Vec<u8>, path: String) -> Promise {
         ecdsa::get_sig(payload, path, 0)
     }
 

@@ -53,7 +53,7 @@ const deploy = async () => {
     await sleep(1000);
 
     const file = fs.readFileSync('./contract/target/near/contract.wasm');
-    const account = getAccount(contractId);
+    let account = getAccount(contractId);
     await account.deployContract(file);
     console.log('deployed bytes', file.byteLength);
     const balance = await account.getAccountBalance();
@@ -71,6 +71,22 @@ const deploy = async () => {
     });
 
     console.log('initRes', initRes);
+
+    await sleep(1000);
+
+    // owner
+    const codehash = 'sha256:';
+    account = getAccount(accountId);
+    const approveRes = await account.functionCall({
+        contractId,
+        methodName: 'approve_codehash',
+        args: {
+            codehash,
+        },
+        gas,
+    });
+
+    console.log('approveRes', approveRes);
 };
 
 deploy();
