@@ -16,10 +16,6 @@ export default async function getAddress(req, res) {
         chain: 'evm',
     });
 
-    await ethereum.call({
-        from: address,
-    });
-
     res.status(200).json({
         address,
     });

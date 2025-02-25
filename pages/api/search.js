@@ -29,9 +29,9 @@ const processTweets = async () => {
         evmAddress: tweet.evmAddress,
     });
 
-    // sentiment * 10000 and then add decimals and convert to string
+    // abs(sentiment * 10000) and then add decimals and convert to string
     const uint256 =
-        parseInt(tweet.sentiment * 10000, 10) + '000000000000000000';
+        Math.abs(parseInt(tweet.sentiment * 10000, 10)) + '000000000000000000';
 
     // evm call
     try {
