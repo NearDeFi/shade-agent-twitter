@@ -1,8 +1,21 @@
 version: '4.0'
 services:
     web:
+        environment:
+            TWITTER_USERNAME: ${TWITTER_USERNAME}
+            TWITTER_AUTH_TOKEN: ${TWITTER_AUTH_TOKEN}
+            TWITTER_CT0: ${TWITTER_CT0}
+            TWITTER_GUEST_ID: ${TWITTER_GUEST_ID}
+            TWITTER_BASED: ${TWITTER_BASED}
+            TWITTER_SHADE: ${TWITTER_SHADE}
+            NEXT_PUBLIC_contractId: ${NEXT_PUBLIC_contractId}
+            MPC_PUBLIC_KEY_TESTNET: ${MPC_PUBLIC_KEY_TESTNET}
+            MPC_PUBLIC_KEY_MAINNET: ${MPC_PUBLIC_KEY_MAINNET}
+            EVM_TOKEN_ADDRESS_BASED: ${EVM_TOKEN_ADDRESS_BASED}
+            EVM_TOKEN_ADDRESS_SHADE: ${EVM_TOKEN_ADDRESS_SHADE}
+            EVM_MINTER: ${EVM_MINTER}
         platform: linux/amd64 # Explicitly set for TDX
-        image: mattdlockyer/shade-agent-twitter:latest@sha256:ae42a3a274e7ce02c0737b5a214f96354f0984a77fb446d8ca85eb084a4c93eb
+        image: mattdlockyer/shade-agent-twitter:latest@sha256:5d9bbb7a3baf4fccbe85cf9ad8625fe9b16ffeb279728d1a2c499acfa686f252
         container_name: web
         ports:
             - '3000:3000'

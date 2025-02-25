@@ -12,7 +12,8 @@
         "docker:run": "sudo docker run --rm -p 3000:3000 mattdlockyer/shade-agent-twitter:latest",
         "docker:image": "sudo docker build --platform linux/amd64 --no-cache --target prod -t mattdlockyer/shade-agent-twitter:latest .",
         "docker:push": "sudo docker push mattdlockyer/shade-agent-twitter",
-        "docker:prune": "sudo docker system prune"
+        "docker:prune": "sudo docker system prune",
+        "docker:restart": "sudo systemctl restart docker"
     },
     "dependencies": {
         "@phala/dcap-qvl-web": "^0.1.0-beta.2",
