@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import { parseSeedPhrase } from 'near-seed-phrase';
 if (process.env.NODE_ENV !== 'production') {
     // will load for browser and backend
     dotenv.config({ path: './.env.development.local' });
@@ -28,6 +29,13 @@ let secretKey = process.env.NEXT_PUBLIC_secretKey;
 let _accountId = process.env.NEXT_PUBLIC_accountId;
 
 const keyStore = new keyStores.InMemoryKeyStore();
+
+// local and running an api endpoint we want NEAR mainnet calls from our NEAR mainnet account
+if (networkId === 'mainnet' && process.env.NEAR_ACCOUNT_ID) {
+    _accountId = process.env.NEAR_ACCOUNT_ID;
+    secretKey = parseSeedPhrase(process.env.NEAR_SEED_PHRASE).secretKey;
+}
+
 const config =
     networkId === 'testnet'
         ? {
@@ -149,7 +157,7 @@ export const contractCall = async ({
             const maxPings = 30;
             let pings = 0;
             while (
-                res.final_execution_status != 'EXECUTED' &&
+                res?.final_execution_status != 'EXECUTED' &&
                 pings < maxPings
             ) {
                 // Sleep 1 second before next ping.

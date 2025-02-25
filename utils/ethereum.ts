@@ -153,15 +153,19 @@ export const ethereum = {
 
     call: async ({
         from: address,
-        to = '0x93CbB7a2c2D0B98C0DaB6Bcb9500c37d81d24805',
+        to = '0x5FbDB2315678afecb367f032d93F642f64180aa3',
         method = 'mint',
         args = {
-            address: '0xFa3D3ffd922ac4b520B7E3354F51Af37728A2fE3',
-            uint256: '1000000000000000000',
+            address: '0xbdDBD3A43F2474147C48CA56dc849edB981145A0',
+            uint256: '1337000000000000000000',
         },
         ret = [],
     }) => {
-        const { getGasPrice, completeEthereumTx, chainId } = ethereum;
+        const { getGasPrice, completeEthereumTx, chainId, getBalance } =
+            ethereum;
+
+        const balance = await getBalance({ address });
+        console.log('from account balance', balance);
 
         const provider = getSepoliaProvider();
         console.log('call contract', to);
@@ -193,7 +197,7 @@ export const ethereum = {
         const serializedTxHash = Buffer.from(hexPayload.substring(2), 'hex');
 
         const sigRes = await contractCall({
-            accountId: process.env.NEXT_PUBLIC_accountId,
+            accountId: undefined,
             methodName: 'get_signature',
             args: {
                 payload: [...serializedTxHash],
@@ -226,7 +230,7 @@ export const ethereum = {
                 'eth_sendRawTransaction',
                 [serializedTx],
             );
-            console.log('tx hash', hash);
+            console.log('SUCCESS! TX HASH:', hash);
         } catch (e) {
             if (/nonce too low/gi.test(JSON.stringify(e))) {
                 return console.log('tx has been tried');
@@ -262,7 +266,9 @@ const encodeData = ({ method, args, ret }) => {
 
 const getSepoliaProvider = () => {
     return new ethers.JsonRpcProvider(
-        'https://rpc.hyperliquid-testnet.xyz/evm',
+        networkId === 'mainnet'
+            ? 'https://rpc.hyperliquid.xyz/evm'
+            : 'https://rpc.hyperliquid-testnet.xyz/evm',
     );
 };
 

@@ -5,7 +5,7 @@ const call = async () => {
         publicKey:
             'secp256k1:3tFRbMqmoa6AAALMrEFAYCEoHcqKxeW38YptwowBVBtXK1vo36HDbUWuR6EZmoK4JcH6HDkNMGGqP1ouV7VZUWya',
         accountId: 'v0.shadeagent.near',
-        path: 'token-giveaway-agent',
+        path: 'shadeagent007',
         chain: 'evm',
     });
 

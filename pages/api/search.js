@@ -12,14 +12,15 @@ let lastTimestampShade = 0;
 let tweets = [];
 let isShade = false;
 
-console.log('TWITTER_USERNAME', process.env.TWITTER_USERNAME);
-console.log('Running on NEAR', networkId);
-
 const processTweets = async () => {
+    // pull first tweet
     const tweet = tweets.shift();
-    if (!tweet) return;
+    if (!tweet) {
+        console.log('processTweets: NO MORE TWEETS');
+        return;
+    }
 
-    console.log('processing tweet', {
+    console.log('processTweets current:', {
         id: tweet.id,
         username: tweet.username,
         text: tweet.text,
@@ -28,45 +29,42 @@ const processTweets = async () => {
         evmAddress: tweet.evmAddress,
     });
 
-    // get evm address to send from
-    const { address } = await generateAddress({
-        publicKey:
-            networkId === 'testnet'
-                ? process.env.MPC_PUBLIC_KEY_TESTNET
-                : process.env.MPC_PUBLIC_KEY_MAINNET,
-        accountId: process.env.NEXT_PUBLIC_contractId,
-        path: 'shadeagent007',
-        chain: 'evm',
-    });
-
+    // sentiment * 10000 and then add decimals and convert to string
     const uint256 =
-        (tweet.sentiment * 10000).toString().split('.')[0] +
-        '000000000000000000';
+        parseInt(tweet.sentiment * 10000, 10) + '000000000000000000';
 
-    // make evm call
-    await ethereum.call({
-        from: address,
-        to: isShade
-            ? process.env.EVM_TOKEN_ADDRESS_SHADE
-            : process.env.EVM_TOKEN_ADDRESS_BASED,
-        args: {
-            address:
-                tweet.evmAddress ||
-                '0xFa3D3ffd922ac4b520B7E3354F51Af37728A2fE3',
-            uint256,
-        },
-    });
+    // evm call
+    try {
+        await ethereum.call({
+            from: process.env.EVM_MINTER,
+            to:
+                tweet.sentiment > 0
+                    ? process.env.EVM_TOKEN_ADDRESS_BASED
+                    : process.env.EVM_TOKEN_ADDRESS_SHADE,
+            method: 'mint',
+            args: {
+                address: tweet.evmAddress,
+                uint256,
+            },
+        });
+    } catch (e) {
+        console.log('processTweets error sending tokens', e);
+    }
 
-    await twitter(
-        'sendTweet',
-        `😎 thanks @${tweet.username} I just sent you ${uint256} ${
-            isShade ? 'SHADE' : 'BASED'
-        } tokens. 😎`,
-        tweet.id,
-    );
+    try {
+        await twitter(
+            'sendTweet',
+            `😎 thanks @${tweet.username} I just sent you ${uint256.substring(
+                0,
+                4,
+            )} ${isShade ? 'SHADE' : 'BASED'} tokens on HyperLiquid. 😎`,
+            tweet.id,
+        );
+    } catch (e) {
+        console.log('processTweets error sending reply', e);
+    }
 
     await sleep(15000);
-
     processTweets();
 };
 
@@ -74,12 +72,12 @@ export default async function search(req, res) {
     const searchTerm = isShade
         ? process.env.TWITTER_SHADE
         : process.env.TWITTER_BASED;
-    console.log('searching for tweets matching', searchTerm);
+    console.log('SEARCHING: ', searchTerm);
     // Search for recent tweets
     const results = await twitter(
         'searchTweets',
         searchTerm,
-        20,
+        100,
         SearchMode.Latest,
     );
 
@@ -87,14 +85,15 @@ export default async function search(req, res) {
     const temp = await Array.fromAsync(results);
     temp.reverse();
 
-    console.log('tweet results.length', temp.length);
+    console.log('SEARCH results.length', temp.length);
 
     // push new tweets
     for (const tweet of temp) {
-        if (tweet.timestamp <= lastTimestamp) continue;
         if (isShade) {
+            if (tweet.timestamp <= lastTimestampShade) continue;
             lastTimestampShade = tweet.timestamp;
         } else {
+            if (tweet.timestamp <= lastTimestampBased) continue;
             lastTimestampBased = tweet.timestamp;
         }
 
@@ -104,20 +103,15 @@ export default async function search(req, res) {
         if (tweet.sentiment === 0) tweet.sentiment = 0.1;
         // tweet contains address
         tweet.evmAddress = tweet.text.match(/0x[a-fA-F0-9]{40}/gim)?.[0];
-        // tweet.nearTestnetAccount = tweet.text.match(
-        //     /([a-zA-Z0-9]*).testnet/gim,
-        // )?.[0];
-        // tweet.nearMainnetAccount =
-        //     tweet.text.match(/([a-zA-Z0-9]*).near/gim)?.[0];
 
         if (!tweet.evmAddress) continue;
 
         tweets.push(tweet);
     }
-    // switch from based to shade search terms
+    // switch search
     isShade = !isShade;
 
-    console.log('tweets matching criteria.length', tweets.length);
+    console.log('SEARCH matching criteria', tweets.length);
 
     processTweets();
 
