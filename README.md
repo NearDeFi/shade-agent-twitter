@@ -1,3 +1,30 @@
+# Shade Agent Twitter
+
+![image](https://github.com/user-attachments/assets/2d13296c-0087-4e83-a275-5d57dc3eb826)
+
+This repository is an example of a Shade Agent. For more on Shade Agents visit [near.ai/shade](https://near.ai/shade).
+
+## Worker Agent
+
+In order to recreate this project, you will need to create your own:
+
+- Twitter Account
+- NEAR Smart Contract for the Shade Agent
+- Token contracts on Hyper Liquid
+- Deployment of Worker Agent on Phala Cloud
+
+Here's the demo agent works, currently live here [@shadeagent007](https://x.com/shadeagent007):
+
+1. The worker agent controls a twitter account and uses the [@elizaOS agent-twitter-client](https://github.com/elizaOS/agent-twitter-client) to search for 2 terms, "Shade Agents" and "AI Slop".
+1. When a tweet matches these terms, it's evaluated for sentiment using [Natural](https://naturalnode.github.io/natural/sentiment_analysis.html) and given a score from -1, 1.
+1. The tweet must also contain a valid EVM address in the `0xabcdef...` format.
+1. The worker agent constructs an EVM mint call sending 10000 * sentiment score # of tokens to the address in the tweet.
+1. The tokens minted will come from either the BASED (positive sentiment) or SHADE (negative sentiment) contracts deployed on Hyper Liquid.
+1. The worker agent must be registered, running in a TEE and with the correct codehash to call the `get_signature` method.
+1. NEAR Chain Signatures returns a valid ECDSA signature for a derived account with args: `account_id: v0.shadeagent.near, path: shadeagent007`
+1. The worker agent attaches the signature to the transaction and broadcasts it.
+1. Tokens are minted.
+
 # Shade Agents
 
 ## Shade Agent Template
