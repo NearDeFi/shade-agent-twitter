@@ -140,11 +140,6 @@ export default function Home() {
                                 href="#"
                                 className={styles.card}
                                 onClick={async () => {
-                                    if (!accountId) {
-                                        accountId = window.prompt(
-                                            'Account ID of Worker?',
-                                        );
-                                    }
                                     setMessage(
                                         'Calling get_worker ' + accountId,
                                     );

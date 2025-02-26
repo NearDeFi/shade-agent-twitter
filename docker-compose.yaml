@@ -15,7 +15,7 @@ services:
             EVM_TOKEN_ADDRESS_SHADE: ${EVM_TOKEN_ADDRESS_SHADE}
             EVM_MINTER: ${EVM_MINTER}
         platform: linux/amd64 # Explicitly set for TDX
-        image: mattdlockyer/shade-agent-twitter:latest@sha256:051a3309c2d19bba74fe856e7305137a5a65455287a30cfc4e05557de8fa5005
+        image: mattdlockyer/shade-agent-twitter:latest@sha256:f2e387a04f021173b692516dca2da3d1569a25dfa9150c86db2876ac72487826
         container_name: web
         ports:
             - '3000:3000'
