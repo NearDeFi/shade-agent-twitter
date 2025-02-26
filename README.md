@@ -1,3 +1,69 @@
+# Shade Agent Twitter
+
+This repository is an example of a Shade Agent. For more on Shade Agents visit [near.ai/shade](https://near.ai/shade).
+
+
+
+![image](https://github.com/user-attachments/assets/2d13296c-0087-4e83-a275-5d57dc3eb826)
+
+## How it Works
+
+Currently live here [@shadeagent007](https://x.com/shadeagent007):
+
+1. The worker agent controls a twitter account and uses the [@elizaOS agent-twitter-client](https://github.com/elizaOS/agent-twitter-client) to search for 2 terms, "Shade Agents" and "AI Slop".
+1. When a tweet matches these terms, it's evaluated for sentiment using [Natural](https://naturalnode.github.io/natural/sentiment_analysis.html) and given a score from -1, 1.
+1. The tweet must also contain a valid EVM address in the `0xabcdef...` format.
+1. The worker agent constructs an EVM mint call sending 10000 * sentiment score # of tokens to the address in the tweet.
+1. The tokens minted will come from either the BASED (positive sentiment) or SHADE (negative sentiment) contracts deployed on Hyper Liquid.
+1. The worker agent must be registered, running in a TEE and with the correct codehash to call the `get_signature` method.
+1. NEAR Chain Signatures returns a valid ECDSA signature for a derived account with args: `account_id: v0.shadeagent.near, path: shadeagent007`
+1. The worker agent attaches the signature to the transaction and broadcasts it.
+1. Tokens are minted.
+
+## Your Own Agent?
+
+In order to recreate this project, you will need to create your own:
+
+- Twitter Account
+- NEAR Smart Contract for the Shade Agent
+- Token contracts on Hyper Liquid
+- Deployment of Worker Agent on Phala Cloud
+
+## Environment Variables
+
+It will be useful to set environment variables both on Phala Cloud deployment through the encrypted secrets and for your own local testing.
+
+Create a file called `.env.development.local` and it will be automatically picked up by NextJS when you run `yarn dev`.
+
+Here is the deployment `yaml` for Phala Cloud and environment variables used in the example from above:
+
+```yaml
+version: '4.0'
+services:
+    web:
+        environment:
+            TWITTER_USERNAME: ${TWITTER_USERNAME}
+            TWITTER_AUTH_TOKEN: ${TWITTER_AUTH_TOKEN}
+            TWITTER_CT0: ${TWITTER_CT0}
+            TWITTER_GUEST_ID: ${TWITTER_GUEST_ID}
+            TWITTER_BASED: ${TWITTER_BASED}
+            TWITTER_SHADE: ${TWITTER_SHADE}
+            NEXT_PUBLIC_contractId: ${NEXT_PUBLIC_contractId}
+            MPC_PUBLIC_KEY_TESTNET: ${MPC_PUBLIC_KEY_TESTNET}
+            MPC_PUBLIC_KEY_MAINNET: ${MPC_PUBLIC_KEY_MAINNET}
+            EVM_TOKEN_ADDRESS_BASED: ${EVM_TOKEN_ADDRESS_BASED}
+            EVM_TOKEN_ADDRESS_SHADE: ${EVM_TOKEN_ADDRESS_SHADE}
+            EVM_MINTER: ${EVM_MINTER}
+        platform: linux/amd64 # Explicitly set for TDX
+        image: mattdlockyer/shade-agent-twitter:latest@sha256:051a3309c2d19bba74fe856e7305137a5a65455287a30cfc4e05557de8fa5005
+        container_name: web
+        ports:
+            - '3000:3000'
+        volumes:
+            - /var/run/tappd.sock:/var/run/tappd.sock
+        restart: always
+```
+  
 # Shade Agents
 
 ## Shade Agent Template
