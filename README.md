@@ -8,7 +8,7 @@ This repository is an example of a Shade Agent. For more on Shade Agents visit [
 
 ## How it Works
 
-Here's the demo agent works, currently live here [@shadeagent007](https://x.com/shadeagent007):
+Currently live here [@shadeagent007](https://x.com/shadeagent007):
 
 1. The worker agent controls a twitter account and uses the [@elizaOS agent-twitter-client](https://github.com/elizaOS/agent-twitter-client) to search for 2 terms, "Shade Agents" and "AI Slop".
 1. When a tweet matches these terms, it's evaluated for sentiment using [Natural](https://naturalnode.github.io/natural/sentiment_analysis.html) and given a score from -1, 1.
