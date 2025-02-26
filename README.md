@@ -1,17 +1,12 @@
 # Shade Agent Twitter
 
-![image](https://github.com/user-attachments/assets/2d13296c-0087-4e83-a275-5d57dc3eb826)
-
 This repository is an example of a Shade Agent. For more on Shade Agents visit [near.ai/shade](https://near.ai/shade).
 
-## Worker Agent
 
-In order to recreate this project, you will need to create your own:
 
-- Twitter Account
-- NEAR Smart Contract for the Shade Agent
-- Token contracts on Hyper Liquid
-- Deployment of Worker Agent on Phala Cloud
+![image](https://github.com/user-attachments/assets/2d13296c-0087-4e83-a275-5d57dc3eb826)
+
+## How it Works
 
 Here's the demo agent works, currently live here [@shadeagent007](https://x.com/shadeagent007):
 
@@ -25,6 +20,50 @@ Here's the demo agent works, currently live here [@shadeagent007](https://x.com/
 1. The worker agent attaches the signature to the transaction and broadcasts it.
 1. Tokens are minted.
 
+## Your Own Agent?
+
+In order to recreate this project, you will need to create your own:
+
+- Twitter Account
+- NEAR Smart Contract for the Shade Agent
+- Token contracts on Hyper Liquid
+- Deployment of Worker Agent on Phala Cloud
+
+## Environment Variables
+
+It will be useful to set environment variables both on Phala Cloud deployment through the encrypted secrets and for your own local testing.
+
+Create a file called `.env.development.local` and it will be automatically picked up by NextJS when you run `yarn dev`.
+
+Here is the deployment `yaml` for Phala Cloud and environment variables used in the example from above:
+
+```yaml
+version: '4.0'
+services:
+    web:
+        environment:
+            TWITTER_USERNAME: ${TWITTER_USERNAME}
+            TWITTER_AUTH_TOKEN: ${TWITTER_AUTH_TOKEN}
+            TWITTER_CT0: ${TWITTER_CT0}
+            TWITTER_GUEST_ID: ${TWITTER_GUEST_ID}
+            TWITTER_BASED: ${TWITTER_BASED}
+            TWITTER_SHADE: ${TWITTER_SHADE}
+            NEXT_PUBLIC_contractId: ${NEXT_PUBLIC_contractId}
+            MPC_PUBLIC_KEY_TESTNET: ${MPC_PUBLIC_KEY_TESTNET}
+            MPC_PUBLIC_KEY_MAINNET: ${MPC_PUBLIC_KEY_MAINNET}
+            EVM_TOKEN_ADDRESS_BASED: ${EVM_TOKEN_ADDRESS_BASED}
+            EVM_TOKEN_ADDRESS_SHADE: ${EVM_TOKEN_ADDRESS_SHADE}
+            EVM_MINTER: ${EVM_MINTER}
+        platform: linux/amd64 # Explicitly set for TDX
+        image: mattdlockyer/shade-agent-twitter:latest@sha256:051a3309c2d19bba74fe856e7305137a5a65455287a30cfc4e05557de8fa5005
+        container_name: web
+        ports:
+            - '3000:3000'
+        volumes:
+            - /var/run/tappd.sock:/var/run/tappd.sock
+        restart: always
+```
+  
 # Shade Agents
 
 ## Shade Agent Template
