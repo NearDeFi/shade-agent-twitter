@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "deploy:contract": "cd contract && cargo near build --no-docker && cd .. && node ./utils/deploy.js",
-        "test:contract": "cd contract && cargo near build --no-docker && cd .. && ava ./tests/test.js --serial --timeout 30s",
+        "test:contract": "cd contract && cargo near build non-reproducible-wasm && cd .. && ava ./tests/test.js --serial --timeout 30s",
         "dev": "next dev",
         "build": "next build",
         "tappd:run": "sudo docker run --rm -p 8090:8090 phalanetwork/tappd-simulator:latest",
@@ -15,6 +15,7 @@
         "docker:restart": "sudo systemctl restart docker"
     },
     "dependencies": {
+        "@neardefi/shade-agent-js": "^0.0.5",
         "@phala/dcap-qvl-web": "^0.1.0-beta.2",
         "@phala/dstack-sdk": "^0.1.7",
         "agent-twitter-client": "^0.0.17",
