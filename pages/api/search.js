@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { twitter, SearchMode } from '../../utils/twitter';
+import { twitter, SearchMode } from '@neardefi/shade-agent-js';
 import { SentimentAnalyzer, PorterStemmer } from 'natural';
 import { generateAddress } from '../../utils/kdf';
 import { ethereum } from '../../utils/ethereum';
@@ -54,8 +54,7 @@ const processTweets = async () => {
     }
 
     try {
-        await twitter(
-            'sendTweet',
+        await twitter.sendTweet(
             `😎 thanks @${tweet.username} I just sent you ${uint256.substring(
                 0,
                 4,
@@ -78,8 +77,7 @@ export default async function search(req, res) {
         : process.env.TWITTER_BASED;
     console.log('SEARCHING: ', searchTerm);
     // Search for recent tweets
-    const results = await twitter(
-        'searchTweets',
+    const results = await twitter.searchTweets(
         searchTerm,
         100,
         SearchMode.Latest,
